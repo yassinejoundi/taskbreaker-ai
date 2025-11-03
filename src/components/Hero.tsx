@@ -15,6 +15,7 @@ export function Hero() {
       title: inputText.trim(),
       completed: false,
       isExpanded: false,
+      isSubtask: false,
     })
 
     setInputText("")
