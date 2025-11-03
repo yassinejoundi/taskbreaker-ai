@@ -17,10 +17,7 @@ export function TaskItem({
   const [isBreakingDown, setIsBreakingDown] = useState(false)
 
   const task = getTaskById(taskId)
-
-  if (!task) {
-    return null
-  }
+  if (!task) return null
 
   const handleBreakdown = async (id: string) => {
     setIsBreakingDown(true)
@@ -43,7 +40,8 @@ export function TaskItem({
     <div className="w-full">
       <div
         className={`
-          flex items-center justify-between p-3 rounded-lg
+          flex flex-col sm:flex-row sm:items-center sm:justify-between
+          p-3 rounded-lg gap-2 sm:gap-0
           transition-all duration-200
           ${
             depth === 0
@@ -54,7 +52,8 @@ export function TaskItem({
           hover:shadow-md
         `}
       >
-        <div className="flex items-center gap-2 flex-1 min-w-0">
+        {/* LEFT SECTION: main content */}
+        <div className="flex items-center gap-2 flex-1 min-w-0 overflow-hidden">
           {hasSubtasks && (
             <button
               onClick={toggleExpand}
@@ -79,58 +78,66 @@ export function TaskItem({
 
           <span
             className={`
-              text-base flex-1 min-w-0
-              ${
-                task.completed
-                  ? "line-through text-slate-500"
-                  : depth === 0
-                  ? "text-slate-900 font-medium"
-                  : "text-slate-700"
-              }
-            `}
+    text-sm sm:text-base flex-1 min-w-0 wrap-break-words
+    ${
+      task.completed
+        ? "line-through text-slate-500"
+        : depth === 0
+        ? "text-slate-900 font-medium"
+        : "text-slate-700"
+    }
+    sm:truncate
+  `}
           >
             {task.title}
           </span>
 
           {hasSubtasks && (
-            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full shrink-0">
+            <span className="hidden sm:inline text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full shrink-0">
               {task.subtasks!.length}{" "}
               {task.subtasks!.length === 1 ? "step" : "steps"}
             </span>
           )}
         </div>
 
-        <Button
-          onClick={() => handleBreakdown(task.id)}
-          disabled={isBreakingDown || hasSubtasks || task.completed}
-          className={`
-            ml-3 shrink-0
-            ${
-              hasSubtasks
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-black hover:bg-slate-800"
-            }
-          `}
-          size="sm"
-        >
-          <Sparkles className="w-4 h-4 mr-2" />
-          {isBreakingDown ? "Breaking..." : hasSubtasks ? "Done" : "Breakdown"}
-        </Button>
+        {/* RIGHT SECTION: buttons */}
+        <div className="flex justify-end sm:justify-normal items-center gap-2 sm:ml-3 w-full sm:w-auto">
+          <Button
+            onClick={() => handleBreakdown(task.id)}
+            disabled={isBreakingDown || hasSubtasks || task.completed}
+            className={`
+              flex-1 sm:flex-none text-sm
+              ${
+                hasSubtasks
+                  ? "bg-slate-400 cursor-not-allowed"
+                  : "bg-black hover:bg-slate-800 text-white"
+              }
+            `}
+            size="sm"
+          >
+            <Sparkles className="w-4 h-4 mr-2 hidden sm:inline" />
+            {isBreakingDown
+              ? "Breaking..."
+              : hasSubtasks
+              ? "Done"
+              : "Breakdown"}
+          </Button>
 
-        <Button
-          onClick={() => deleteTask(task.id)}
-          variant="ghost"
-          size="icon"
-          className="ml-2 bg-red-100 text-red-500 hover:text-red-700 hover:bg-red-200"
-          aria-label="Delete task"
-        >
-          <Trash className="w-4 h-4" />
-        </Button>
+          <Button
+            onClick={() => deleteTask(task.id)}
+            variant="ghost"
+            size="icon"
+            className="bg-red-100 text-red-500 hover:text-red-700 hover:bg-red-200 shrink-0"
+            aria-label="Delete task"
+          >
+            <Trash className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Render subtasks with indentation */}
+      {/* Render subtasks */}
       {hasSubtasks && task.isExpanded && (
-        <div className="ml-6 mt-2 pl-4 border-l-2 border-slate-200">
+        <div className="ml-3 sm:ml-6 mt-2 pl-3 sm:pl-4 border-l-2 border-slate-200">
           {task.subtasks!.map((subtask) => (
             <TaskItem key={subtask.id} taskId={subtask.id} depth={depth + 1} />
           ))}
