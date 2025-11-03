@@ -8,8 +8,11 @@ interface Task {
 
 interface TaskStore {
   tasks: Task[]
+  addTask: (task: Task) => void
 }
 
-export const useTaskStore = create<TaskStore>(() => ({
+export const useTaskStore = create<TaskStore>((set) => ({
   tasks: [],
+  addTask: (newTask: Task) =>
+    set((state) => ({ tasks: [newTask, ...state.tasks] })),
 }))

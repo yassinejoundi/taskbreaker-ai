@@ -2,10 +2,21 @@ import { useState } from "react"
 import { Card, CardContent } from "./ui/card"
 import { Button } from "./ui/button"
 
+import { useTaskStore } from "@/store/useTaskStore"
+
 export function Hero() {
   const [inputText, setInputText] = useState("")
-  const addTask = () => {
-    console.log(inputText)
+
+  const { addTask, tasks } = useTaskStore()
+  const handleAddTask = () => {
+    if (!inputText.trim()) return
+    addTask({
+      id: Date.now().toString(),
+      title: inputText.trim(),
+      completed: false,
+    })
+
+    setInputText("")
   }
   return (
     <header>
@@ -26,12 +37,12 @@ export function Hero() {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addTask()}
+                onKeyPress={(e) => e.key === "Enter" && handleAddTask()}
                 className="flex-1 h-9 w-full px-3 text-sm text-black placeholder:text-black focus:outline-none"
                 placeholder="What do you want to accomplish?"
               />
               <Button
-                onClick={addTask}
+                onClick={handleAddTask}
                 className="bg-black text-white px-6 py-2 font-semibold"
               >
                 Add Task
@@ -39,6 +50,14 @@ export function Hero() {
             </div>
           </CardContent>
         </Card>
+        {tasks.map((task, index) => (
+          <p
+            key={index}
+            className="bg-black text-white px-6 py-2 font-semibold"
+          >
+            {task.title}
+          </p>
+        ))}
       </div>
     </header>
   )
