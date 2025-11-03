@@ -58,7 +58,7 @@ export function TaskItem({
           {hasSubtasks && (
             <button
               onClick={toggleExpand}
-              className="hover:bg-slate-200 rounded p-1 transition-colors flex-shrink-0"
+              className="hover:bg-slate-200 rounded p-1 transition-colors shrink-0"
               aria-label={
                 task.isExpanded ? "Collapse subtasks" : "Expand subtasks"
               }
@@ -74,7 +74,7 @@ export function TaskItem({
           <Checkbox
             checked={task.completed}
             onCheckedChange={() => toggleComplete(task.id)}
-            className="flex-shrink-0"
+            className="shrink-0"
           />
 
           <span
@@ -93,7 +93,7 @@ export function TaskItem({
           </span>
 
           {hasSubtasks && (
-            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full flex-shrink-0">
+            <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full shrink-0">
               {task.subtasks!.length}{" "}
               {task.subtasks!.length === 1 ? "step" : "steps"}
             </span>
@@ -102,9 +102,9 @@ export function TaskItem({
 
         <Button
           onClick={() => handleBreakdown(task.id)}
-          disabled={isBreakingDown || hasSubtasks}
+          disabled={isBreakingDown || hasSubtasks || task.completed}
           className={`
-            ml-3 flex-shrink-0
+            ml-3 shrink-0
             ${
               hasSubtasks
                 ? "bg-slate-400 cursor-not-allowed"

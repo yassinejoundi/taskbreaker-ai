@@ -11,7 +11,7 @@ export default function HomePage() {
   const { tasks } = useTaskStore()
 
   return (
-    <div className="bg-gray-950 justify-center items-center min-h-screen">
+    <div className="bg-linear-to-t from-sky-900 to-indigo-900 justify-center items-center min-h-screen ">
       <main className="mx-auto w-full max-w-5xl px-5 py-16 md:px-10 md:py-24">
         <Hero />
 
