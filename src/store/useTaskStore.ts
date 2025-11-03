@@ -17,6 +17,7 @@ interface TaskStore {
   toggleComplete: (id: string) => void
   breakDownTask: (id: string) => Promise<void>
   getTaskById: (id: string) => Task | null
+  deleteTask: (id: string) => void
 }
 
 // Helper function to find a task recursively
@@ -130,5 +131,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       console.error("Error breaking down task:", error)
       throw error
     }
+  },
+  deleteTask: (id) => {
+    set((state) => {
+      const removeTaskRecursively = (tasks: Task[]): Task[] =>
+        tasks
+          .filter((t) => t.id !== id)
+          .map((t) => ({
+            ...t,
+            subtasks: t.subtasks ? removeTaskRecursively(t.subtasks) : [],
+          }))
+
+      return { tasks: removeTaskRecursively(state.tasks) }
+    })
   },
 }))

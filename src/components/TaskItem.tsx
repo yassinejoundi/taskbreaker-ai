@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { Checkbox } from "./ui/checkbox"
 import { Button } from "./ui/button"
-import { Sparkles, ChevronDown, ChevronRight } from "lucide-react"
+import { Sparkles, ChevronDown, ChevronRight, Trash } from "lucide-react"
 import { useTaskStore } from "@/store/useTaskStore"
 
 export function TaskItem({
@@ -12,7 +12,7 @@ export function TaskItem({
   taskId: string
   depth?: number
 }) {
-  const { breakDownTask, toggleComplete, updateTask, getTaskById } =
+  const { breakDownTask, toggleComplete, updateTask, getTaskById, deleteTask } =
     useTaskStore()
   const [isBreakingDown, setIsBreakingDown] = useState(false)
 
@@ -115,6 +115,16 @@ export function TaskItem({
         >
           <Sparkles className="w-4 h-4 mr-2" />
           {isBreakingDown ? "Breaking..." : hasSubtasks ? "Done" : "Breakdown"}
+        </Button>
+
+        <Button
+          onClick={() => deleteTask(task.id)}
+          variant="ghost"
+          size="icon"
+          className="ml-2 bg-red-100 text-red-500 hover:text-red-700 hover:bg-red-200"
+          aria-label="Delete task"
+        >
+          <Trash className="w-4 h-4" />
         </Button>
       </div>
 
