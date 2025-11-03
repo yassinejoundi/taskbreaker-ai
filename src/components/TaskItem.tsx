@@ -73,7 +73,7 @@ export function TaskItem({
           <Checkbox
             checked={task.completed}
             onCheckedChange={() => toggleComplete(task.id)}
-            className="shrink-0"
+            className="shrink-0 border border-black"
           />
 
           <span
@@ -115,7 +115,7 @@ export function TaskItem({
             `}
             size="sm"
           >
-            <Sparkles className="w-4 h-4 mr-2 hidden sm:inline" />
+            <Sparkles className="w-4 h-4 mr-2 sm:inline" />
             {isBreakingDown
               ? "Breaking..."
               : hasSubtasks
