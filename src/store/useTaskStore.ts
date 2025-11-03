@@ -85,18 +85,16 @@ export const useTaskStore = create<TaskStore>()(
           return
         }
 
-        console.log("Breaking down task:", task.title)
-
         try {
-          const response = await fetch("https://goblin.tools/api/todo", {
+          const response = await fetch("/api/todos", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              Text: task.title,
-              Spiciness: 2,
-              Ancestors: task.ancestors || [],
+              text: task.title,
+              spiciness: 2,
+              ancestors: task.ancestors || [],
             }),
           })
 
@@ -105,7 +103,6 @@ export const useTaskStore = create<TaskStore>()(
           }
 
           const data = await response.json()
-          console.log("API Response:", data)
 
           // Create subtasks with proper ancestry
           const subtasks: Task[] = (data || []).map(
@@ -119,15 +116,12 @@ export const useTaskStore = create<TaskStore>()(
             })
           )
 
-          console.log("Created subtasks:", subtasks)
-
           // Update the parent task with subtasks
           set((state) => {
             const updatedTasks = updateTaskRecursive(state.tasks, id, {
               subtasks,
               isExpanded: true,
             })
-            console.log("Updated tasks:", updatedTasks)
             return { tasks: updatedTasks }
           })
         } catch (error) {
