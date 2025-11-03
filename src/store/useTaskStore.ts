@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { persist, createJSONStorage } from "zustand/middleware"
 interface Task {
   id: string
   title: string
@@ -150,8 +150,8 @@ export const useTaskStore = create<TaskStore>()(
       },
     }),
     {
-      name: "task-storage", // localStorage key
-      getStorage: () => localStorage as Storage, // explicit return type
+      name: "task-storage", // key in localStorage
+      storage: createJSONStorage(() => localStorage), // ✅ new syntax
     }
   )
 )
