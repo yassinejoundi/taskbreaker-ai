@@ -7,26 +7,25 @@ import { useTaskStore } from "@/store/useTaskStore"
 export function Hero() {
   const [inputText, setInputText] = useState("")
 
-  const { addTask, tasks } = useTaskStore()
+  const { addTask } = useTaskStore()
   const handleAddTask = () => {
     if (!inputText.trim()) return
     addTask({
       id: Date.now().toString(),
       title: inputText.trim(),
       completed: false,
+      isExpanded: false,
     })
 
     setInputText("")
   }
   return (
     <header>
-      {/* Hero Container */}
-      <div className="mx-auto w-full max-w-7xl px-5 py-16 md:px-8 md:py-20">
-        {/* Hero Title */}
+      <div className="mx-auto w-full max-w-5xl p-6">
         <h1 className="mb-4 text-white text-center text-4xl font-bold md:text-6xl md:leading-tight">
           TaskBreaker AI
         </h1>
-        <p className="mb-6 text-sm text-gray-200 text-center sm:text-xl md:mb-10 lg:mb-12">
+        <p className="mb-6 text-sm text-gray-200 text-center sm:text-xl ">
           Break down complex tasks into manageable steps
         </p>
         {/* Form */}
@@ -50,14 +49,6 @@ export function Hero() {
             </div>
           </CardContent>
         </Card>
-        {tasks.map((task, index) => (
-          <p
-            key={index}
-            className="bg-black text-white px-6 py-2 font-semibold"
-          >
-            {task.title}
-          </p>
-        ))}
       </div>
     </header>
   )
