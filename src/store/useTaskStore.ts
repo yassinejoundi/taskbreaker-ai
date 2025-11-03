@@ -1,5 +1,5 @@
 import { create } from "zustand"
-
+import { persist } from "zustand/middleware"
 interface Task {
   id: string
   title: string
@@ -52,97 +52,106 @@ const updateTaskRecursive = (
   })
 }
 
-export const useTaskStore = create<TaskStore>((set, get) => ({
-  tasks: [],
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set, get) => ({
+      tasks: [],
 
-  addTask: (newTask) => set((state) => ({ tasks: [newTask, ...state.tasks] })),
+      addTask: (newTask) =>
+        set((state) => ({ tasks: [newTask, ...state.tasks] })),
 
-  updateTask: (id, updates) =>
-    set((state) => ({
-      tasks: updateTaskRecursive(state.tasks, id, updates),
-    })),
+      updateTask: (id, updates) =>
+        set((state) => ({
+          tasks: updateTaskRecursive(state.tasks, id, updates),
+        })),
 
-  toggleComplete: (id) =>
-    set((state) => ({
-      tasks: updateTaskRecursive(state.tasks, id, {
-        completed: !findTask(state.tasks, id)?.completed,
-      }),
-    })),
+      toggleComplete: (id) =>
+        set((state) => ({
+          tasks: updateTaskRecursive(state.tasks, id, {
+            completed: !findTask(state.tasks, id)?.completed,
+          }),
+        })),
 
-  getTaskById: (id) => {
-    const { tasks } = get()
-    return findTask(tasks, id)
-  },
+      getTaskById: (id) => {
+        const { tasks } = get()
+        return findTask(tasks, id)
+      },
 
-  breakDownTask: async (id) => {
-    const { tasks } = get()
-    const task = findTask(tasks, id)
-    if (!task) {
-      console.error("Task not found:", id)
-      return
-    }
+      breakDownTask: async (id) => {
+        const { tasks } = get()
+        const task = findTask(tasks, id)
+        if (!task) {
+          console.error("Task not found:", id)
+          return
+        }
 
-    console.log("Breaking down task:", task.title)
+        console.log("Breaking down task:", task.title)
 
-    try {
-      const response = await fetch("https://goblin.tools/api/todo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          Text: task.title,
-          Spiciness: 2,
-          Ancestors: task.ancestors || [],
-        }),
-      })
+        try {
+          const response = await fetch("https://goblin.tools/api/todo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              Text: task.title,
+              Spiciness: 2,
+              Ancestors: task.ancestors || [],
+            }),
+          })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
 
-      const data = await response.json()
-      console.log("API Response:", data)
+          const data = await response.json()
+          console.log("API Response:", data)
 
-      // Create subtasks with proper ancestry
-      const subtasks: Task[] = (data || []).map(
-        (title: string, index: number) => ({
-          id: `${task.id}-${index}`,
-          title,
-          completed: false,
-          isExpanded: false,
-          isSubtask: true,
-          ancestors: [...(task.ancestors || []), task.title],
+          // Create subtasks with proper ancestry
+          const subtasks: Task[] = (data || []).map(
+            (title: string, index: number) => ({
+              id: `${task.id}-${index}`,
+              title,
+              completed: false,
+              isExpanded: false,
+              isSubtask: true,
+              ancestors: [...(task.ancestors || []), task.title],
+            })
+          )
+
+          console.log("Created subtasks:", subtasks)
+
+          // Update the parent task with subtasks
+          set((state) => {
+            const updatedTasks = updateTaskRecursive(state.tasks, id, {
+              subtasks,
+              isExpanded: true,
+            })
+            console.log("Updated tasks:", updatedTasks)
+            return { tasks: updatedTasks }
+          })
+        } catch (error) {
+          console.error("Error breaking down task:", error)
+          throw error
+        }
+      },
+      deleteTask: (id) => {
+        set((state) => {
+          const removeTaskRecursively = (tasks: Task[]): Task[] =>
+            tasks
+              .filter((t) => t.id !== id)
+              .map((t) => ({
+                ...t,
+                subtasks: t.subtasks ? removeTaskRecursively(t.subtasks) : [],
+              }))
+
+          return { tasks: removeTaskRecursively(state.tasks) }
         })
-      )
-
-      console.log("Created subtasks:", subtasks)
-
-      // Update the parent task with subtasks
-      set((state) => {
-        const updatedTasks = updateTaskRecursive(state.tasks, id, {
-          subtasks,
-          isExpanded: true,
-        })
-        console.log("Updated tasks:", updatedTasks)
-        return { tasks: updatedTasks }
-      })
-    } catch (error) {
-      console.error("Error breaking down task:", error)
-      throw error
+      },
+    }),
+    {
+      name: "task-storage", // localStorage key
+      getStorage: () => localStorage as Storage, // explicit return type
     }
-  },
-  deleteTask: (id) => {
-    set((state) => {
-      const removeTaskRecursively = (tasks: Task[]): Task[] =>
-        tasks
-          .filter((t) => t.id !== id)
-          .map((t) => ({
-            ...t,
-            subtasks: t.subtasks ? removeTaskRecursively(t.subtasks) : [],
-          }))
-
-      return { tasks: removeTaskRecursively(state.tasks) }
-    })
-  },
-}))
+  )
+)
