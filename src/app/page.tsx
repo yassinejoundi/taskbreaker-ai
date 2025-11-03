@@ -18,9 +18,9 @@ export default function HomePage() {
         {/* Tasks Section */}
         {tasks.length > 0 ? (
           <section className="px-2 sm:px-4">
-            <Card className="border border-slate-700/50 bg-white/30 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden">
+            <Card className="border border-slate-700/50 bg-white backdrop-blur-md shadow-lg rounded-2xl overflow-hidden">
               <CardHeader className="border-b border-slate-700/40">
-                <CardTitle className="text-xl sm:text-2xl text-white font-semibold text-center sm:text-left">
+                <CardTitle className="text-xl sm:text-2xl text-black font-semibold text-center sm:text-left">
                   Tasks List
                 </CardTitle>
               </CardHeader>
