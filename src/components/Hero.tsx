@@ -4,6 +4,9 @@ import { Button } from "./ui/button"
 
 export function Hero() {
   const [inputText, setInputText] = useState("")
+  const addTask = () => {
+    console.log(inputText)
+  }
   return (
     <header>
       {/* Hero Container */}
@@ -23,10 +26,14 @@ export function Hero() {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addTask()}
                 className="flex-1 h-9 w-full px-3 text-sm text-black placeholder:text-black focus:outline-none"
                 placeholder="What do you want to accomplish?"
               />
-              <Button className="bg-black text-white px-6 py-2 font-semibold">
+              <Button
+                onClick={addTask}
+                className="bg-black text-white px-6 py-2 font-semibold"
+              >
                 Add Task
               </Button>
             </div>
