@@ -10,24 +10,22 @@ export default function HomePage() {
   const { tasks } = useTaskStore()
 
   return (
-    <div className="bg-gradient-to-t from-sky-900 to-indigo-900 flex justify-center items-start min-h-screen">
-      <main className="w-full max-w-5xl px-4 sm:px-6 md:px-10 py-12 md:py-20">
+    <div className="bg-linear-to-t from-sky-900 to-indigo-900 flex justify-center items-start min-h-screen">
+      <main className="w-full max-w-5xl px-2 sm:px-6 md:px-10 py-12 md:py-20">
         {/* Hero Section */}
-        <section className="mb-10 sm:mb-16">
-          <Hero />
-        </section>
+        <Hero />
 
         {/* Tasks Section */}
         {tasks.length > 0 ? (
           <section className="px-2 sm:px-4">
-            <Card className="mb-8 border border-slate-700/50 bg-white/10 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden">
-              <CardHeader className="pb-3 border-b border-slate-700/40">
+            <Card className="border border-slate-700/50 bg-white/30 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden">
+              <CardHeader className="border-b border-slate-700/40">
                 <CardTitle className="text-xl sm:text-2xl text-white font-semibold text-center sm:text-left">
                   Tasks List
                 </CardTitle>
               </CardHeader>
 
-              <CardContent className="py-4 sm:py-6 px-3 sm:px-6 space-y-3 sm:space-y-4">
+              <CardContent className="px-3 sm:px-6 space-y-3 sm:space-y-4">
                 {tasks.map((task) => (
                   <TaskItem key={task.id} taskId={task.id} />
                 ))}
